@@ -111,27 +111,18 @@ end
 
 # step 4
 def computer_makes_move!(brd)
-  square = ''
   puts "Now the computer is deciding where to move..."
   sleep(1)
   if imminent_threat?(brd)
-    detect_threat(brd).each do |square|
-      puts square
-      if empty_squares(brd).include?(square)
-        brd[square] = COMPUTER_MARKER
+    detect_threat(brd).each do |sqr|
+      if empty_squares(brd).include?(sqr)
+        brd[sqr] = COMPUTER_MARKER
         break
       end
     end
   else
-    loop do
-      square = rand(9) + 1
-      if board_full?(brd)
-        break
-      elsif empty_squares(brd).include?(square)
-        brd[square] = COMPUTER_MARKER
-        break
-      end
-    end
+    square = empty_squares(brd).sample
+    brd[square] = COMPUTER_MARKER
   end
 end
 
