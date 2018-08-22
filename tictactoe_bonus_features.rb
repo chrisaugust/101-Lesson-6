@@ -58,6 +58,25 @@ def empty_squares(brd)
   brd.keys.select { |num| brd[num] == INITIAL_MARKER }
 end
 
+# helper methods for computer defense
+
+def imminent_threat?(brd)
+  !!detect_threat(brd)
+end
+
+# detects threats of 2 squares in a row
+# returns an array with the winning line that needs to be defended against, or nil
+
+def detect_threat(brd)
+  WINNING_LINES.each do |line|
+    if brd.values_at(*line).count(PLAYER_MARKER) == 2 && brd.values_at(*line).count(' ') == 1
+      return line
+    end
+  end
+  nil
+end
+
+
 # joinor method
 # takes an array and optionally a delimiting char and final connecting conjunction
 # these optional params default to comma and 'or' respectively
@@ -95,13 +114,23 @@ def computer_makes_move!(brd)
   square = ''
   puts "Now the computer is deciding where to move..."
   sleep(1)
-  loop do
-    square = rand(9) + 1
-    if board_full?(brd)
-      break
-    elsif empty_squares(brd).include?(square)
-      brd[square] = COMPUTER_MARKER
-      break
+  if imminent_threat?(brd)
+    detect_threat(brd).each do |square|
+      puts square
+      if empty_squares(brd).include?(square)
+        brd[square] = COMPUTER_MARKER
+        break
+      end
+    end
+  else
+    loop do
+      square = rand(9) + 1
+      if board_full?(brd)
+        break
+      elsif empty_squares(brd).include?(square)
+        brd[square] = COMPUTER_MARKER
+        break
+      end
     end
   end
 end
