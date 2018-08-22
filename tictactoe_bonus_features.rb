@@ -69,7 +69,7 @@ end
 
 def detect_threat(brd)
   WINNING_LINES.each do |line|
-    if brd.values_at(*line).count(PLAYER_MARKER) == 2 && brd.values_at(*line).count(' ') == 1
+    if brd.values_at(*line).count(PLAYER_MARKER) == 2 && brd.values_at(*line).count(INITIAL_MARKER) == 1
       return line
     end
   end
@@ -184,7 +184,10 @@ loop do
     else
       puts "Play again? (y)es or (n)o"
       again = gets.chomp
-      unless again == "y"
+      if again == "n"
+        goodbye
+        exit(0)
+      elsif again == "y"
         break
       end
     end
