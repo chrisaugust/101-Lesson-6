@@ -61,21 +61,27 @@ end
 # helper methods for computer defense
 
 def imminent_threat?(brd)
-  !!detect_threat(brd)
+  !!detect_threat(brd, PLAYER_MARKER)
+end
+
+# helper method for computer offense
+
+def possible_win?(brd)
+  !!detect_threat(brd, COMPUTER_MARKER)
 end
 
 # detects threats of 2 squares in a row
 # returns an array with the winning line that needs to be defended against, or nil
 
-def detect_threat(brd)
+# can be used defensively and offensively by changing value of player param
+def detect_threat(brd, marker)
   WINNING_LINES.each do |line|
-    if brd.values_at(*line).count(PLAYER_MARKER) == 2 && brd.values_at(*line).count(INITIAL_MARKER) == 1
+    if brd.values_at(*line).count(marker) == 2 && brd.values_at(*line).count(INITIAL_MARKER) == 1
       return line
     end
   end
   nil
 end
-
 
 # joinor method
 # takes an array and optionally a delimiting char and final connecting conjunction
@@ -113,13 +119,23 @@ end
 def computer_makes_move!(brd)
   puts "Now the computer is deciding where to move..."
   sleep(1)
-  if imminent_threat?(brd)
-    detect_threat(brd).each do |sqr|
+  if possible_win?(brd)
+    detect_threat(brd, COMPUTER_MARKER).each do |sqr|
       if empty_squares(brd).include?(sqr)
         brd[sqr] = COMPUTER_MARKER
         break
       end
     end
+  elsif imminent_threat?(brd)
+    detect_threat(brd, PLAYER_MARKER).each do |sqr|
+      if empty_squares(brd).include?(sqr)
+        brd[sqr] = COMPUTER_MARKER
+        break
+      end
+    end
+  # play center square
+  elsif empty_squares(brd).include?(5)
+    brd[5] = COMPUTER_MARKER
   else
     square = empty_squares(brd).sample
     brd[square] = COMPUTER_MARKER
@@ -188,7 +204,7 @@ loop do
         goodbye
         exit(0)
       elsif again == "y"
-        break
+        next
       end
     end
   end
