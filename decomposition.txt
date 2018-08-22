@@ -1,0 +1,25 @@
+Tic Tac Toe
+----------------
+
+Broad Description
+
+A two player game played on a 3 by 3 grid. Players take turns
+marking a square (one player with X's and the other with O's) until
+a player has marked three squares in a row (vertically, horizontally, 
+or diagonally), or there are no unmarked squares left. Game can end with a win
+or with a tie (called a "cat's game").
+
+
+Sequential Breakdown
+
+0. Welcome message.
+1. Display empty board
+2. Prompt user to mark a square.
+3. Computer marks a square.
+4. Display updated board.
+5. Check for winner.
+6. Check for full board.
+7. If no winner and game is still in progress, back to step #2
+8. Display outcome of game.
+9. Play again? back to step #1
+10. Goodbye.
