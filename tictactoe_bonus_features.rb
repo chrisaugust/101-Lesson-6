@@ -129,25 +129,49 @@ end
 
 welcome
 loop do
-  board = initialize_board
-  display_board(board)
+  player_wins = 0
+  computer_wins = 0
   loop do
-    player_makes_move!(board)
+    board = initialize_board
     display_board(board)
-    break if someone_won?(board) || board_full?(board)
-    computer_makes_move!(board)
-    display_board(board)
-    break if someone_won?(board) || board_full?(board)
-  end
+    loop do
+      player_makes_move!(board)
+      display_board(board)
+      break if someone_won?(board) || board_full?(board)
+      computer_makes_move!(board)
+      display_board(board)
+      break if someone_won?(board) || board_full?(board)
+    end
 
-  if someone_won?(board)
-    puts "#{detect_winner(board)} won!"
-  else
-    puts "It's a tie!"
+    winner = ''
+    if someone_won?(board)
+      winner = detect_winner(board)
+      puts "#{winner} won!"
+      case winner
+      when 'Player'
+        player_wins += 1
+      when 'Computer'
+        computer_wins += 1
+      end
+    else
+      puts "It's a tie!"
+    end
+    puts "The score is Player: #{player_wins}, Computer: #{computer_wins}" 
+    if player_wins == 5 || computer_wins == 5
+      puts "-------------------------------"
+      puts "That makes 5 wins for #{winner}"
+      break 
+    else
+      puts "Play again? (y)es or (n)o"
+      again = gets.chomp
+      unless again == "y"
+        break
+      end
+    end
   end
-  puts "Play again? (y)es or (n)o"
-  again = gets.chomp
-  unless again == "y"
+  puts "Play another best of 5? (y) or (n)o"
+  another_five = gets.chomp
+  unless another_five == "y"
     break
   end
 end
