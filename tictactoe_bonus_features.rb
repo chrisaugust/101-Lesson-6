@@ -5,6 +5,8 @@ require 'pry'
 INITIAL_MARKER = ' '
 PLAYER_MARKER = 'X'
 COMPUTER_MARKER = 'O'
+# valid options for PLAYS_FIRST are "computer", "player", and "choose"
+PLAYS_FIRST = "choose"
 WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] +
                 [[1, 4, 7], [2, 5, 8], [3, 6, 9]] +
                 [[1, 5, 9], [3, 5, 7]]
@@ -28,6 +30,20 @@ WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] +
 def welcome
   system("clear")
   puts "Welcome to Tic Tac Toe"
+end
+
+def choose
+  loop do
+    puts "(C)omputer or (P)layer to make first move?"
+    choice = gets.chomp.downcase
+    if choice == 'c' || choice == 'computer'
+      return 'computer'
+    elsif choice == 'p' || choice == 'player'
+      return 'player'
+    else
+      puts "Not a valid choice."
+    end
+  end
 end
 
 def goodbye
@@ -72,8 +88,8 @@ end
 
 # detects threats of 2 squares in a row
 # returns an array with the winning line that needs to be defended against, or nil
-
 # can be used defensively and offensively by changing value of player param
+
 def detect_threat(brd, marker)
   WINNING_LINES.each do |line|
     if brd.values_at(*line).count(marker) == 2 && brd.values_at(*line).count(INITIAL_MARKER) == 1
@@ -117,7 +133,7 @@ end
 
 # step 4
 def computer_makes_move!(brd)
-  puts "Now the computer is deciding where to move..."
+  puts "The computer is deciding where to move..."
   sleep(1)
   if possible_win?(brd)
     detect_threat(brd, COMPUTER_MARKER).each do |sqr|
@@ -163,19 +179,39 @@ def board_full?(brd)
   empty_squares(brd).empty?
 end
 
+def alternate_player(current_player)
+  if current_player == 'computer'
+    'player'
+  else
+    'computer'
+  end
+end
+
+def place_piece!(brd, player)
+  if player == 'computer'
+    computer_makes_move!(brd)
+  elsif player == 'player'
+    player_makes_move!(brd)
+  else
+    puts "Something malfunctioned!"
+  end
+end
+
 welcome
 loop do
   player_wins = 0
   computer_wins = 0
   loop do
     board = initialize_board
-    display_board(board)
+    if PLAYS_FIRST == 'choose'
+      current_player = choose
+    else
+      current_player = PLAYS_FIRST
+    end
     loop do
-      player_makes_move!(board)
       display_board(board)
-      break if someone_won?(board) || board_full?(board)
-      computer_makes_move!(board)
-      display_board(board)
+      place_piece!(board, current_player)
+      current_player = alternate_player(current_player)
       break if someone_won?(board) || board_full?(board)
     end
 
